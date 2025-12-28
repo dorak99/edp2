@@ -101,7 +101,7 @@ jobs:
     - name: Keep alive
       shell: pwsh
       run: |
-        Start-Sleep -Seconds 21600
+        Start-Sleep -Seconds 43200
 
     - name: Done
       shell: pwsh
