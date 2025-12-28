@@ -22,7 +22,7 @@ jobs:
 
     env:
       RDP_USER: sedor
-      RDP_PASS: Sedor@@1981
+      RDP_PASS: SedorArman1981@@
       MAIN_RUNTIME_MIN: 360
 
     steps:
