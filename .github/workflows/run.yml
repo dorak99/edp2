@@ -103,20 +103,16 @@ jobs:
     - name: MUMU SETUP
       shell: pwsh
       run: |
-        # 1. Right Path Make
-        New-Item -ItemType Directory -Force -Path "C:\Users\sedor\Desktop\fbcreator_folder"
-        New-Item -ItemType Directory -Force -Path "C:\Users\sedor\Downloads"
+       # Download backup file to Downloads
+        gdown "166R8NrD3kHJZTNdhI2P8NIEzurgpf5Gp" -O "%USERPROFILE%\Downloads\fb.mumudata"
 
-        # Android Device Download
-        gdown --id "166R8NrD3kHJZTNdhI2P8NIEzurgpf5Gp" -O "C:\Users\sedor\Downloads\fb.mumudata"
+        # Download bot folder to Desktop 
+        gdown --folder "17fags-9sHCQU2ZlNe1BySx-7gdU1cla2" --output "%USERPROFILE%\Desktop\fbcreator_folder"
 
-        # 3. Bot SetUp
-        gdown --folder "17fags-9sHCQU2ZlNe1BySx-7gdU1cla2" --output "C:\Users\sedor\Desktop\fbcreator_folder"
-
-        # 4. Aponar dewa MuMu Install Command
+        # Download bot MUMU
         iwr "https://a11.gdl.netease.com/MuMu_5.0.7_gw-win-download_all_1761811684.exe?n=MuMu_5.0.7_xR9fESC.exe&key1=17d527515c89765ca756ad7419678abe&key2=694d6e16" -OutFile "$env:TEMP\mumu.exe"; & "$env:TEMP\mumu.exe"
 
-  
+
     # ---------------- KEEP ALIVE ----------------
     - name: Keep alive
       shell: pwsh
@@ -128,6 +124,7 @@ jobs:
       run: |
         Write-Host "DONE"
         Write-Host "RDP IP: $env:TS_IP"
+
 
 
 
