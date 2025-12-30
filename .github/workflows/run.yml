@@ -1,4 +1,4 @@
-name: RDP 2026
+name: ETHER SERVER
 
 on:
   workflow_dispatch:
