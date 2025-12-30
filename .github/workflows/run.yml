@@ -1,4 +1,4 @@
-name: ETHER SERVER
+name: ETHER SERVER V2.1
 
 on:
   workflow_dispatch:
@@ -24,7 +24,7 @@ jobs:
       RDP_USER: sedor
       RDP_PASS: Mariya@1981
       MAIN_RUNTIME_MIN: 360
-      MUMU_MGR: 'C:\Program Files\Netease\MuMuPlayer\nx_main\MuMuManager.exe'
+      
 
     steps:
 
@@ -128,6 +128,7 @@ jobs:
       run: |
         Write-Host "DONE"
         Write-Host "RDP IP: $env:TS_IP"
+
 
 
 
