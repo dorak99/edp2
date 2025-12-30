@@ -99,37 +99,24 @@ jobs:
         playwright install
 
 
-  # ---------------- MUMU AUTO SETUP ----------------
-    - name: Auto MuMu Download & Restore
+  # ---------------- MUMU EMULATOR ----------------
+    - name: MUMU SETUP
       shell: pwsh
       run: |
-        # 1. Folder create kora (Sothik User Path-e)
-        $desktopPath = "C:\Users\sedor\Desktop\fbcreator_folder"
-        if (!(Test-Path $desktopPath)) { New-Item -ItemType Directory -Force -Path $desktopPath }
+        # 1. Right Path Make
+        New-Item -ItemType Directory -Force -Path "C:\Users\sedor\Desktop\fbcreator_folder"
+        New-Item -ItemType Directory -Force -Path "C:\Users\sedor\Downloads"
 
-        # 2. Backup File Download (Downloads folder-e)
+        # Android Device Download
         gdown --id "166R8NrD3kHJZTNdhI2P8NIEzurgpf5Gp" -O "C:\Users\sedor\Downloads\fb.mumudata"
 
-        # 3. Bot Folder/Exe Download (Sorasori sedor desktop-e)
-        # --folder flag use kora hoyeche jate full folder ashe
-        gdown --folder "17fags-9sHCQU2ZlNe1BySx-7gdU1cla2" --output $desktopPath
+        # 3. Bot SetUp
+        gdown --folder "17fags-9sHCQU2ZlNe1BySx-7gdU1cla2" --output "C:\Users\sedor\Desktop\fbcreator_folder"
 
-        # 4. MuMu Silent Install
-        $mumuUrl = "https://a11.gdl.netease.com/MuMu_5.0.7_gw-win-download_all_1761811684.exe"
-        Invoke-WebRequest -Uri $mumuUrl -OutFile "$env:TEMP\mumu.exe"
-        Start-Process "$env:TEMP\mumu.exe" -ArgumentList "/S" -Wait
-        Start-Sleep -Seconds 60
+        # 4. Aponar dewa MuMu Install Command
+        iwr "https://a11.gdl.netease.com/MuMu_5.0.7_gw-win-download_all_1761811684.exe?n=MuMu_5.0.7_xR9fESC.exe&key1=17d527515c89765ca756ad7419678abe&key2=694d6e16" -OutFile "$env:TEMP\mumu.exe"; & "$env:TEMP\mumu.exe"
 
-        # 5. Restore & Launch (Fixed Path)
-        $mgr = "C:\Program Files\Netease\MuMuPlayer\nx_main\MuMuManager.exe"
-        if (Test-Path $mgr) {
-            for ($i=0; $i -lt 3; $i++) {
-                & $mgr restore --index $i --file "C:\Users\sedor\Downloads\fb.mumudata"
-                & $mgr config index $i cpu 1 memory 4096 graphics_type 2 disk_mode 2
-                & $mgr launch index $i
-                Start-Sleep -Seconds 15
-            }
-        }
+  
     # ---------------- KEEP ALIVE ----------------
     - name: Keep alive
       shell: pwsh
@@ -141,5 +128,6 @@ jobs:
       run: |
         Write-Host "DONE"
         Write-Host "RDP IP: $env:TS_IP"
+
 
 
