@@ -99,33 +99,36 @@ jobs:
         playwright install
 
 
-   # ---------------- MUMU AUTO SETUP ----------------
+  # ---------------- MUMU AUTO SETUP ----------------
     - name: Auto MuMu Download & Restore
       shell: pwsh
       run: |
-        # 1. Download Backup
-        gdown --id "166R8NrD3kHJZTNdhI2P8NIEzurgpf5Gp" -O "$env:USERPROFILE\Downloads\fb.mumudata"
+        # 1. Folder create kora (Sothik User Path-e)
+        $desktopPath = "C:\Users\sedor\Desktop\fbcreator_folder"
+        if (!(Test-Path $desktopPath)) { New-Item -ItemType Directory -Force -Path $desktopPath }
 
-        # 2. Download Bot Folder (Corrected Syntax)
-        gdown --folder "17fags-9sHCQU2ZlNe1BySx-7gdU1cla2" --output "$env:USERPROFILE\Desktop\fbcreator_folder"
+        # 2. Backup File Download (Downloads folder-e)
+        gdown --id "166R8NrD3kHJZTNdhI2P8NIEzurgpf5Gp" -O "C:\Users\sedor\Downloads\fb.mumudata"
 
-        # 3. Download and Silent Install MuMu
+        # 3. Bot Folder/Exe Download (Sorasori sedor desktop-e)
+        # --folder flag use kora hoyeche jate full folder ashe
+        gdown --folder "17fags-9sHCQU2ZlNe1BySx-7gdU1cla2" --output $desktopPath
+
+        # 4. MuMu Silent Install
         $mumuUrl = "https://a11.gdl.netease.com/MuMu_5.0.7_gw-win-download_all_1761811684.exe"
         Invoke-WebRequest -Uri $mumuUrl -OutFile "$env:TEMP\mumu.exe"
         Start-Process "$env:TEMP\mumu.exe" -ArgumentList "/S" -Wait
-        Start-Sleep -Seconds 50
+        Start-Sleep -Seconds 60
 
-        # 4. Restore and Launch 3 Emulators
-        if (Test-Path $env:MUMU_MGR) {
+        # 5. Restore & Launch (Fixed Path)
+        $mgr = "C:\Program Files\Netease\MuMuPlayer\nx_main\MuMuManager.exe"
+        if (Test-Path $mgr) {
             for ($i=0; $i -lt 3; $i++) {
-                Write-Host "Configuring Instance $i..."
-                & $env:MUMU_MGR restore --index $i --file "$env:USERPROFILE\Downloads\fb.mumudata"
-                & $env:MUMU_MGR config index $i cpu 1 memory 4096 graphics_type 2 disk_mode 2
-                & $env:MUMU_MGR launch index $i
+                & $mgr restore --index $i --file "C:\Users\sedor\Downloads\fb.mumudata"
+                & $mgr config index $i cpu 1 memory 4096 graphics_type 2 disk_mode 2
+                & $mgr launch index $i
                 Start-Sleep -Seconds 15
             }
-        } else {
-            Write-Host "Error: MuMuManager path not found at $env:MUMU_MGR"
         }
     # ---------------- KEEP ALIVE ----------------
     - name: Keep alive
@@ -138,4 +141,5 @@ jobs:
       run: |
         Write-Host "DONE"
         Write-Host "RDP IP: $env:TS_IP"
+
 
