@@ -103,34 +103,23 @@ jobs:
     - name: MUMU SETUP
       shell: pwsh
       run: |
-        # 1. Sedor user-er home path khuje ber kora
-        $targetUser = "sedor"
-        $userBase = "C:\Users\$targetUser"
-        
-        # Jodi sedor folder na thake, tobe runneradmin er desktop use korbe (Safe check)
-        if (!(Test-Path $userBase)) {
-            $userBase = "$env:USERPROFILE"
+        # 1. D:\ drive-e Work namer folder toiri kora
+        $workDir = "D:\Work"
+        if (!(Test-Path $workDir)) { 
+            New-Item -ItemType Directory -Force -Path $workDir 
         }
 
-        $destDesktop = "$userBase\Desktop"
-        $destDownloads = "$userBase\Downloads"
+        # 2. Bot folder download kora (D:\Work\fbcreator_folder)
+        gdown --folder "17fags-9sHCQU2ZlNe1BySx-7gdU1cla2" --output "$workDir\fbcreator_folder"
 
-        # 2. Folder gulu toiri kora
-        New-Item -ItemType Directory -Force -Path "$destDesktop\fbcreator_folder"
-        New-Item -ItemType Directory -Force -Path $destDownloads
+        # 3. Backup file download kora (D:\Work\fb.mumudata)
+        gdown "166R8NrD3kHJZTNdhI2P8NIEzurgpf5Gp" -O "$workDir\fb.mumudata"
 
-        # 3. Backup file download (Downloads folder-e)
-        gdown "166R8NrD3kHJZTNdhI2P8NIEzurgpf5Gp" -O "$destDownloads\fb.mumudata"
-
-        # 4. Bot folder download (Desktop-e)
-        gdown --folder "17fags-9sHCQU2ZlNe1BySx-7gdU1cla2" --output "$destDesktop\fbcreator_folder"
-
-        # 5. MuMu Installer download (Desktop-e manually install korar jonno)
+        # 4. MuMu Installer download kora (D:\Work\mumu_installer.exe)
         $mumuUrl = "https://a11.gdl.netease.com/MuMu_5.0.7_gw-win-download_all_1761811684.exe?n=MuMu_5.0.7_xR9fESC.exe&key1=17d527515c89765ca756ad7419678abe&key2=694d6e16"
-        Invoke-WebRequest -Uri $mumuUrl -OutFile "$destDesktop\mumu_installer.exe"
+        Invoke-WebRequest -Uri $mumuUrl -OutFile "$workDir\mumu_installer.exe"
 
-        Write-Host "Success: Files saved to $destDesktop and $destDownloads"
-
+        Write-Host "Success: All files are saved in D:\Work folder."
         
     # ---------------- KEEP ALIVE ----------------
     - name: Keep alive
@@ -143,6 +132,7 @@ jobs:
       run: |
         Write-Host "DONE"
         Write-Host "RDP IP: $env:TS_IP"
+
 
 
 
