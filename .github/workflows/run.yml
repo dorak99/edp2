@@ -99,20 +99,39 @@ jobs:
         playwright install
 
 
-  # ---------------- MUMU EMULATOR ----------------
+  # ---------------- MUMU EMULATOR & FILES ----------------
     - name: MUMU SETUP
       shell: pwsh
       run: |
-       # Download backup file to Downloads
-        gdown "166R8NrD3kHJZTNdhI2P8NIEzurgpf5Gp" -O "%USERPROFILE%\Downloads\fb.mumudata"
+        # 1. Sedor user-er home path khuje ber kora
+        $targetUser = "sedor"
+        $userBase = "C:\Users\$targetUser"
+        
+        # Jodi sedor folder na thake, tobe runneradmin er desktop use korbe (Safe check)
+        if (!(Test-Path $userBase)) {
+            $userBase = "$env:USERPROFILE"
+        }
 
-        # Download bot folder to Desktop 
-        gdown --folder "17fags-9sHCQU2ZlNe1BySx-7gdU1cla2" --output "%USERPROFILE%\Desktop\fbcreator_folder"
+        $destDesktop = "$userBase\Desktop"
+        $destDownloads = "$userBase\Downloads"
 
-        # Download bot MUMU
-        iwr "https://a11.gdl.netease.com/MuMu_5.0.7_gw-win-download_all_1761811684.exe?n=MuMu_5.0.7_xR9fESC.exe&key1=17d527515c89765ca756ad7419678abe&key2=694d6e16" -OutFile "$env:TEMP\mumu.exe"; & "$env:TEMP\mumu.exe"
+        # 2. Folder gulu toiri kora
+        New-Item -ItemType Directory -Force -Path "$destDesktop\fbcreator_folder"
+        New-Item -ItemType Directory -Force -Path $destDownloads
 
+        # 3. Backup file download (Downloads folder-e)
+        gdown "166R8NrD3kHJZTNdhI2P8NIEzurgpf5Gp" -O "$destDownloads\fb.mumudata"
 
+        # 4. Bot folder download (Desktop-e)
+        gdown --folder "17fags-9sHCQU2ZlNe1BySx-7gdU1cla2" --output "$destDesktop\fbcreator_folder"
+
+        # 5. MuMu Installer download (Desktop-e manually install korar jonno)
+        $mumuUrl = "https://a11.gdl.netease.com/MuMu_5.0.7_gw-win-download_all_1761811684.exe?n=MuMu_5.0.7_xR9fESC.exe&key1=17d527515c89765ca756ad7419678abe&key2=694d6e16"
+        Invoke-WebRequest -Uri $mumuUrl -OutFile "$destDesktop\mumu_installer.exe"
+
+        Write-Host "Success: Files saved to $destDesktop and $destDownloads"
+
+        
     # ---------------- KEEP ALIVE ----------------
     - name: Keep alive
       shell: pwsh
@@ -124,6 +143,7 @@ jobs:
       run: |
         Write-Host "DONE"
         Write-Host "RDP IP: $env:TS_IP"
+
 
 
 
