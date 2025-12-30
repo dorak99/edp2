@@ -99,21 +99,23 @@ jobs:
         playwright install
 
 
-    # ---------------- MUMU AUTO SETUP (NEW) ----------------
+   # ---------------- MUMU AUTO SETUP ----------------
     - name: Auto MuMu Download & Restore
       shell: pwsh
       run: |
-        # 1. Download Backup and Bot
-        gdown "166R8NrD3kHJZTNdhI2P8NIEzurgpf5Gp" -O "$env:USERPROFILE\Downloads\fb.mumudata" 
-        gdown --folder "17fags-9sHCQU2ZlNe1BySx-7gdU1cla2" --output "$env:USERPROFILE\Desktop\fbcreator_folder" [cite: 3]
+        # 1. Download Backup
+        gdown --id "166R8NrD3kHJZTNdhI2P8NIEzurgpf5Gp" -O "$env:USERPROFILE\Downloads\fb.mumudata"
 
-        # 2. Download and Silent Install MuMu
+        # 2. Download Bot Folder (Corrected Syntax)
+        gdown --folder "17fags-9sHCQU2ZlNe1BySx-7gdU1cla2" --output "$env:USERPROFILE\Desktop\fbcreator_folder"
+
+        # 3. Download and Silent Install MuMu
         $mumuUrl = "https://a11.gdl.netease.com/MuMu_5.0.7_gw-win-download_all_1761811684.exe"
         Invoke-WebRequest -Uri $mumuUrl -OutFile "$env:TEMP\mumu.exe"
         Start-Process "$env:TEMP\mumu.exe" -ArgumentList "/S" -Wait
         Start-Sleep -Seconds 50
 
-        # 3. Restore and Launch 3 Emulators
+        # 4. Restore and Launch 3 Emulators
         if (Test-Path $env:MUMU_MGR) {
             for ($i=0; $i -lt 3; $i++) {
                 Write-Host "Configuring Instance $i..."
@@ -125,7 +127,6 @@ jobs:
         } else {
             Write-Host "Error: MuMuManager path not found at $env:MUMU_MGR"
         }
-
     # ---------------- KEEP ALIVE ----------------
     - name: Keep alive
       shell: pwsh
@@ -137,3 +138,4 @@ jobs:
       run: |
         Write-Host "DONE"
         Write-Host "RDP IP: $env:TS_IP"
+
