@@ -94,6 +94,7 @@ jobs:
         pip install customtkinter
         pip install uiautomator2
         pip install opencv-python
+        pip install flask
         pip install playwright
         py -m playwright install
         playwright install
@@ -132,6 +133,7 @@ jobs:
       run: |
         Write-Host "DONE"
         Write-Host "RDP IP: $env:TS_IP"
+
 
 
 
