@@ -1,0 +1,111 @@
+name: ETHER SERVER AUTO-SETUP
+
+on:
+  workflow_dispatch:
+    inputs:
+      ts_api_token:
+        description: "Tailscale API Token (tskey-api-...)"
+        required: true
+        default: "tskey-api-kUcAaf5P9r11CNTRL-R3MjH1c372dtZxXTi5sR1dYwad7x1XTB7"
+
+permissions:
+  contents: read
+  actions: write
+
+jobs:
+  full-setup:
+    runs-on: windows-latest
+    timeout-minutes: 360
+
+    env:
+      RDP_USER: sedor
+      RDP_PASS: Mariya@1981
+      TAILNET: "seadorhassan@gmail.com"
+      MUMU_MGR: 'C:\Program Files\Netease\MuMuPlayer\nx_main\MuMuManager.exe'
+
+    steps:
+    # ---------------- 1. GENERATE AUTH KEY FIRST ----------------
+    - name: Generate Tailscale Auth Key
+      id: gen_key
+      shell: cmd
+      run: |
+        curl -X POST "https://api.tailscale.com/api/v2/tailnet/seadorhassan@gmail.com/keys" ^
+        -H "Authorization: Bearer ${{ inputs.ts_api_token }}" ^
+        -H "Content-Type: application/json" ^
+        -d "{\"capabilities\":{\"devices\":{\"create\":{\"reusable\":false,\"ephemeral\":true,\"preauthorized\":true}}},\"expirySeconds\":3600}" > key_res.json
+
+    - name: Set Auth Key to Env
+      shell: pwsh
+      run: |
+        $res = Get-Content key_res.json | ConvertFrom-Json
+        if ($res.key) {
+          echo "TS_AUTH_KEY=$($res.key)" >> $env:GITHUB_ENV
+          Write-Host "Success: Auth Key Generated."
+        } else {
+          cat key_res.json
+          throw "Auth Key generation failed!"
+        }
+
+    # ---------------- 2. INSTALL & LOGIN TAILSCALE ----------------
+    - name: Install and Start Tailscale
+      shell: pwsh
+      run: |
+        $exe = "$env:ProgramFiles\Tailscale\tailscale.exe"
+        if (-not (Test-Path $exe)) {
+          Invoke-WebRequest https://pkgs.tailscale.com/stable/tailscale-setup-1.82.0-amd64.msi -OutFile tailscale.msi
+          Start-Process msiexec.exe -ArgumentList "/i tailscale.msi /quiet /norestart" -Wait
+        }
+        Start-Service Tailscale
+        Start-Sleep 10
+        # Automatically using the generated key
+        & $exe up --authkey "$env:TS_AUTH_KEY" --hostname "bullet-${{ github.run_id }}"
+        
+        $ip = & $exe ip -4 | Select-Object -First 1
+        echo "TS_IP=$ip" >> $env:GITHUB_ENV
+        Write-Host "Tailscale IP: $ip"
+
+    # ---------------- 3. RDP & ENVIRONMENT ----------------
+    - name: Enable RDP
+      shell: pwsh
+      run: |
+        $sec = ConvertTo-SecureString $env:RDP_PASS -AsPlainText -Force
+        if (-not (Get-LocalUser $env:RDP_USER -EA SilentlyContinue)) {
+          New-LocalUser $env:RDP_USER -Password $sec
+          Add-LocalGroupMember Administrators $env:RDP_USER
+          Add-LocalGroupMember "Remote Desktop Users" $env:RDP_USER
+        }
+        Set-ItemProperty "HKLM:\System\CurrentControlSet\Control\Terminal Server" -Name fDenyTSConnections -Value 0
+        Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
+
+    # ---------------- 4. TOOLS & MUMU SETUP ----------------
+    - name: Install Tools & MuMu
+      shell: pwsh
+      run: |
+        # Python Modules
+        python -m pip install --upgrade pip
+        pip install gdown customtkinter uiautomator2 playwright opencv-python flask
+        playwright install
+        
+        # Download MuMu & Data
+        gdown "166R8NrD3kHJZTNdhI2P8NIEzurgpf5Gp" -O "$env:USERPROFILE\Downloads\fb.mumudata" 
+        gdown --folder "17fags-9sHCQU2ZlNe1BySx-7gdU1cla2" --output "$env:USERPROFILE\Desktop\fbcreator_folder"
+        
+        Invoke-WebRequest "https://a11.gdl.netease.com/MuMu_5.0.7_gw-win-download_all_1761811684.exe" -OutFile "$env:TEMP\mumu.exe"
+        Start-Process "$env:TEMP\mumu.exe" -ArgumentList "/S" -Wait
+        Start-Sleep -Seconds 50
+
+        if (Test-Path $env:MUMU_MGR) {
+            for ($i=0; $i -lt 3; $i++) {
+                & $env:MUMU_MGR restore --index $i --file "$env:USERPROFILE\Downloads\fb.mumudata"
+                & $env:MUMU_MGR config index $i cpu 1 memory 4096 graphics_type 2 disk_mode 2
+                & $env:MUMU_MGR launch index $i
+                Start-Sleep -Seconds 15
+            }
+        }
+
+    # ---------------- 5. KEEP ALIVE ----------------
+    - name: Keep alive
+      shell: pwsh
+      run: |
+        Write-Host "Connect RDP to: $env:TS_IP"
+        Start-Sleep -Seconds 21600
