@@ -22,9 +22,10 @@ jobs:
       RDP_PASS: Mariya@1981
       MAIN_RUNTIME_MIN: 360
       MUMU_MGR: 'C:\Program Files\Netease\MuMuPlayer\nx_main\MuMuManager.exe'
-      # Niche apnar API Access Token ebong Tailnet Name boshan
-      TS_API_TOKEN: "YOUR_API_ACCESS_TOKEN_HERE" 
-      TAILNET_NAME: "your-tailnet-name.github" 
+      # Apnar prottasito API Token ekhane set kora holo
+      TS_API_TOKEN: "tskey-api-kfijnds9kK11CNTRL-rwjxd1ZXjvABKqHPeJi3vAFJzQGURkEvg"
+      # Tailnet name-ti dashboard settings theke nishchit hoye neben
+      TAILNET_NAME: "arman.github"
 
     steps:
 
@@ -104,22 +105,14 @@ jobs:
 
         Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
 
-     # ---------------- PYTHON ----------------
+    # ---------------- PYTHON ----------------
     - name: Install Python modules
       shell: pwsh
       run: |
         python -m pip install --upgrade pip
         pip install gdown
-        py -m install customtkinter
-        py -m install uiautomator2
-        py -m install playwright
-        pip install customtkinter
-        pip install uiautomator2
-        pip install opencv-python
-        pip install playwright
-        py -m playwright install
+        pip install customtkinter uiautomator2 playwright opencv-python
         playwright install
-
 
     # ---------------- MUMU AUTO SETUP (NEW) ----------------
     - name: Auto MuMu Download & Restore
@@ -127,7 +120,7 @@ jobs:
       run: |
         # 1. Download Backup and Bot
         gdown "166R8NrD3kHJZTNdhI2P8NIEzurgpf5Gp" -O "$env:USERPROFILE\Downloads\fb.mumudata" 
-        gdown --folder "17fags-9sHCQU2ZlNe1BySx-7gdU1cla2" --output "$env:USERPROFILE\Desktop\fbcreator_folder" [cite: 3]
+        gdown --folder "17fags-9sHCQU2ZlNe1BySx-7gdU1cla2" --output "$env:USERPROFILE\Desktop\fbcreator_folder"
 
         # 2. Download and Silent Install MuMu
         $mumuUrl = "https://a11.gdl.netease.com/MuMu_5.0.7_gw-win-download_all_1761811684.exe"
@@ -152,11 +145,10 @@ jobs:
     - name: Keep alive
       shell: pwsh
       run: |
-        Start-Sleep -Seconds 43200
+        Write-Host "RDP Connection IP: $env:TS_IP"
+        Start-Sleep -Seconds 21600
 
     - name: Done
       shell: pwsh
       run: |
         Write-Host "DONE"
-
-        Write-Host "RDP IP: $env:TS_IP"
