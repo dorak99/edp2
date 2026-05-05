@@ -58,7 +58,7 @@ jobs:
         Start-Service Tailscale
         Start-Sleep 10
         # Automatically using the generated key
-        & $exe up --authkey "$env:TS_AUTH_KEY" --hostname "bullet-${{ github.run_id }}"
+        & $exe up --authkey "$env:TS_AUTH_KEY" --hostname "ETHER RUNNER v3 FOR ADB-${{ github.run_id }}"
         
         $ip = & $exe ip -4 | Select-Object -First 1
         echo "TS_IP=$ip" >> $env:GITHUB_ENV
