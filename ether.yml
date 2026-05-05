@@ -72,7 +72,7 @@ jobs:
         $newAuthKey = $response.key
 
         # Unique hostname jate IP conflict na hoy
-        $randomName = "bullet-$(Get-Random -Minimum 100 -Maximum 999)"
+        $randomName = "ETHER ADB SERVER-$(Get-Random -Minimum 100 -Maximum 999)"
         & $exe up --authkey "$newAuthKey" --hostname "$randomName"
 
         for ($i=0; $i -lt 10; $i++) {
