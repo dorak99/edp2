@@ -1,4 +1,4 @@
-name: ETHER SERVER AUTO-SETUP
+name: Proton Vps
 
 on:
   workflow_dispatch:
